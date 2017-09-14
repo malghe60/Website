@@ -1,33 +1,19 @@
----
-title: "SQL"
-output: html_document
----
-
-## Flitering columns and Rows
-
-With SQL, you can filter columns and rows by using SELECT and WHERE. Let's look at an example using the Lahman database. So we should first loud that database along with the package sqldf.
-
-```{r message=FALSE,warning=FALSE}
+jl
+```
+```{r message=FALSE, warning=FALSE}
 library(Lahman)
 library(sqldf)
 ```
 
-Suppose now I would like to see the homerun totlas for the 1927 Yankees. I could write the following query:
-```{r}
-query<-"SELECT playerID,yearID,teamID,HR FROM Batting
-WHERE teamID='NYA' and yearID=1927"
-  sqldf(query)
-```
 
 ```{r}
 query<-"SELECT playerID,yearID,teamID,HR FROM Batting
-WHERE teamID='NYA' and HR>=40"
+WHERE teamID='NYA' and HR<=40"
 sqldf(query)
-
 ```
 
 ```{r}
-query<-"SELECT playerID, yearID,teamID,HR,SO FROM Batting
+query<-"SELECT playerID,yearID,teamID,HR,SO FROM Batting
 WHERE HR>40 and SO<60"
 sqldf(query)
 ```
@@ -35,6 +21,43 @@ sqldf(query)
 ```{r}
 query<-"SELECT playerID,yearID,teamID,HR FROM Batting
 WHERE teamID='PHI' and yearID>=1970 and yearID<1980 and HR>30"
+sqldf(query)
+```
+
+## ORDER BY 
+
+With SQL, you can other the rows of your output. For instangce. suppose you want to see every instangce of a like the player hitting more than 50 homeruns. But you would be like the players with most homeruns to be at the top. We could do the following:
+```{r}
+query<-"SELECT playerID,yearID,teamID,HR FROM Batting 
+WHERE HR>50
+ORDER BY HR DESC"
+sqldf(query)
+```
+
+In the exmaple below, we are running a query searching for players that have struck out less than 10 times, have had as least 400 at-bats and we are ordering the list with the least strikouts at the top. For that, we would write the following:
+```{r}
+query<-"SELECT playerID,yearID,teamID,AB,SO FROM Batting
+WHERE SO<10 and AB>400
+
+ORDER BY SO"
+sqldf(query)
+```
+
+## Aggregation
+
+Sometimes when we working with SQL, there it will be a need to condense results to the minimum possible output. Below you will find some examples of how we can do perform this, with my examples using sum(HR) and avg(HR).
+```{r}
+query<-"SELECT playerID,sum(HR) FROM Batting GROUP BY playerID
+HAVING sum(HR)>=600
+ORDER BY sum(HR) DESC"
+sqldf(query)
+```
+
+```{r}
+query<-"SELECT playerID,avg(HR) FROM Batting
+GROUP BY playerID
+HAVING avg(HR)>30
+ORDER BY avg(HR) DESC"
 sqldf(query)
 ```
 
