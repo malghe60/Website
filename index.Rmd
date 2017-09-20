@@ -61,3 +61,71 @@ ORDER BY avg(HR) DESC"
 sqldf(query)
 ```
 
+##Joins
+
+Sometimes when we working with SQL, there are instances where you want to to join multiple tables to come together as one output. Below i will post some examples of code used to go about it.
+```{r}
+query<-"SELECT nameFirst,nameLast,teamID,yearID,HR
+FROM Batting INNER JOIN Master
+ON Batting.playerID=Master.playerID
+WHERE Batting.playerID='ruthba01'"
+sqldf(query)
+```
+
+The example about that, we ran a query looking for seasons where Baba Ruth played baseball, joining the Master and Batting tables to come to or resilt.
+Im\n the example right down, we have linked the Batting and Master tables again to find instances of players hittinh more than 50 homeruns, including first/last name,team,year,and homerun total.
+```{r}
+query<-"SELECT nameFirst,nameLast,teamID,yearID,HR
+FROM Batting INNER JOIN Master
+ON Batting.playerID=Master.playerID
+WHERE HR>50
+ORDER BY HR DESC"
+sqldf(query)
+
+```
+
+For the final of the first set of join queries, we searched for results concerning Baba Ruth, his team name, year played, and homerun totlas.
+```{r}
+query<-"SELECT playerID,name,Batting.HR
+FROM Batting INNER JOIN Teams
+ON Batting.teamID=Teams.teamID and Batting.yearID=Teams.yearID
+WHERE playerID='ruthba01'"
+sqldf(query)
+```
+
+##Joins UPDATE September 13, 2017
+As stated in the previous update of the website, i have now an inst5ance of code where you would be able to link three tables together. The example is below here:
+```{r}
+query<-"SELECT nameFirst,nameLast,name,Batting.yearID,Batting.HR
+FROM Batting INNER JOIN Teams
+ON Batting.teamID=Teams.teamID and Batting.yearID=Teams.yearID
+INNER JOIN Master
+ON Batting.playerID=Master.playerID
+WHERE Batting.playerID='ruthba01'"
+sqldf(query)
+```
+
+As you can see above, there are two INNER JOIN commands in the syntax of our code, one of which links the Teams table and the other linking the Master table, making connections with teamID, yearID, and playerID.
+```{r}
+query<-"SELECT nameFirst,nameLast,sum(HR)
+FROM Batting INNER JOIN Master
+ON Batting.playerID=Master.playerID
+GROUP BY Batting.playerID
+HAVING sum(HR)>=600
+ORDER BY sum(HR) DESC"
+sqldf(query)
+
+
+```
+
+```{r}
+query<-"SELECT nameFirst,nameLast,avg(salary)
+FROM Salaries INNER JOIN Master
+ON Salaries.playerID=Master.playerID
+WHERE nameFirst='Bob'
+GROUP BY Salaries.playerID
+HAVING avg(salary)>1000000
+ORDER BY avg(salary) DESC"
+sqldf(query)
+```
+
